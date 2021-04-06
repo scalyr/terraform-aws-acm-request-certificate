@@ -12,15 +12,8 @@ resource "aws_acm_certificate" "default" {
 
 locals {
   enabled                           = module.this.enabled
-  zone_name                         = var.zone_name == "" ? "${var.domain_name}." : var.zone_name
   process_domain_validation_options = local.enabled && var.process_domain_validation_options && var.validation_method == "DNS"
   domain_validation_options_set     = local.process_domain_validation_options ? aws_acm_certificate.default.0.domain_validation_options : toset([])
-}
-
-data "aws_route53_zone" "default" {
-  count        = local.process_domain_validation_options ? 1 : 0
-  name         = local.zone_name
-  private_zone = false
 }
 
 resource "aws_route53_record" "default" {
@@ -31,7 +24,7 @@ resource "aws_route53_record" "default" {
       type   = dvo.resource_record_type
     }
   }
-  zone_id         = join("", data.aws_route53_zone.default.*.zone_id)
+  zone_id         = var.zone_id
   ttl             = var.ttl
   allow_overwrite = true
   name            = each.value.name

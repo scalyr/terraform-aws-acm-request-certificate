@@ -33,8 +33,8 @@ variable "subject_alternative_names" {
   description = "A list of domains that should be SANs in the issued certificate"
 }
 
-variable "zone_name" {
+variable "zone_id" {
   type        = string
   default     = ""
-  description = "The name of the desired Route53 Hosted Zone"
+  description = "The ID of the desired Route53 Hosted Zone"
 }
